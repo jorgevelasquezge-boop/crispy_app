@@ -1,0 +1,29 @@
+import streamlit as st
+
+# Configuración de precios
+PRECIOS = {"Pollo Honey Boy": 6.50, "Costillitas West Original": 8.50}
+CARGO_DELIVERY = 1.50
+
+st.set_page_config(page_title="Crispy Boy App", page_icon="🍗")
+
+st.title("🍗 Crispy Boy & Co.")
+
+# Formulario de Pedido
+with st.form("nuevo_pedido", clear_on_submit=True):
+    st.subheader("📝 Registrar Pedido")
+    nombre = st.text_input("Nombre del Cliente")
+    combo = st.selectbox("Selecciona el Combo", list(PRECIOS.keys()))
+    servicio = st.radio("Tipo de Servicio", ["Takeout", "Delivery"])
+    direccion = st.text_area("Dirección (Solo si es Delivery)")
+    
+    if st.form_submit_button("Guardar Pedido"):
+        envio = CARGO_DELIVERY if servicio == "Delivery" else 0.0
+        total = PRECIOS[combo] + envio
+        
+        # Resumen para WhatsApp
+        resumen = f"¡Hola {nombre}! Gracias por tu pedido de {combo}. Total: ${total:.2f}. "
+        if servicio == "Delivery": resumen += f"Dirección: {direccion}"
+        
+        st.success(f"✅ Pedido Registrado. Total: ${total:.2f}")
+        st.code(resumen, language="text")
+        st.info("👆 Copia este texto para enviarlo por WhatsApp.")
